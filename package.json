@@ -1,0 +1,16 @@
+{
+  "name": "mi-whatsapp-web-js",
+  "version": "1.0.0",
+  "description": "Puente con WhatsApp usando whatsapp-web.js",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.24.0",
+    "qrcode-terminal": "^0.12.0"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
