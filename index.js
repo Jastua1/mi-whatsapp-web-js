@@ -12,8 +12,11 @@ const client = new Client({
 
 // Muestra QR en consola para escanear con tu celular
 client.on('qr', (qr) => {
-    console.log('QR Code recibido:');
-    qrcode.generate(qr, { small: true });
+    console.log('✅ Escanea este QR con tu WhatsApp:');
+    qrcode.generate(qr, { small: true, type: 'terminal' }, (err, url) => {
+        if (err) console.log(err);
+        else console.log(url);
+    });
 });
 
 // Cuando se conecte
