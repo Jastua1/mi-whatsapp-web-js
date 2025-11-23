@@ -21,36 +21,37 @@ client.on('ready', () => {
 });
 
 client.on('message', async msg => {
+    if (msg.fromMe) return;
+
     console.log(`📩 ${msg.from}: ${msg.body}`);
     
-    // Solo para pruebas: responde cualquier mensaje
-    if (!msg.fromMe) {
-        const webhookUrl = 'https://mi-n8n-render-1.onrender.com/webhook/rBZhcnsuSAPdia3b';
-        try {
-            const res = await fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: msg.body, from: msg.from })
-            });
-            const data = await res.json();
-            await msg.reply(data.response || "Gracias.");
-        } catch (e) {
-            console.error(e);
-            await msg.reply("Error interno.");
-        }
+    // Reemplaza con tu URL real de n8n
+    const webhookUrl = 'https://mi-n8n-render-1.onrender.com/webhook/rBZhcnsuSAPdia3b';
+
+    try {
+        const res = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg.body, from: msg.from })
+        });
+        const data = await res.json();
+        await msg.reply(data.response || "Gracias.");
+    } catch (e) {
+        console.error('Error:', e.message);
+        await msg.reply("⚠️ Asistente temporalmente fuera de servicio.");
     }
 });
 
 // Inicia WhatsApp
 client.initialize();
 
-// Servidor HTTP mínimo para evitar "Failed deploy"
+// ✅ SERVIDOR HTTP MÍNIMO (obligatorio en Render)
 const PORT = process.env.PORT || 10000;
 const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('WhatsApp Web.js está activo');
+    res.end('WhatsApp Web.js activo');
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Servidor HTTP escuchando en el puerto ${PORT}`);
+    console.log(`🚀 Servidor HTTP escuchando en puerto ${PORT}`);
 });
