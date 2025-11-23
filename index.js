@@ -1,46 +1,56 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
+const http = require('http');
 
-// Inicializa el cliente con autenticación local (guarda sesión)
+// Inicializa el cliente de WhatsApp
 const client = new Client({
     puppeteer: {
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     },
-    authStrategy: new LocalAuth()
+    authStrategy: new LocalAuth({ dataPath: '/home/node/.wwebjs_cache' })
 });
 
-// Muestra QR en consola para escanear con tu celular
 client.on('qr', (qr) => {
     console.log('✅ Escanea este QR con tu WhatsApp:');
-    qrcode.generate(qr, { small: true, type: 'terminal' }, (err, url) => {
-        if (err) console.log(err);
-        else console.log(url);
-    });
+    qrcode.generate(qr, { small: true });
 });
 
-// Cuando se conecte
 client.on('ready', () => {
-    console.log('✅ Cliente de WhatsApp listo!');
+    console.log('✅ WhatsApp listo');
 });
 
-// Escucha mensajes entrantes
 client.on('message', async msg => {
-    console.log(`📩 Mensaje recibido de ${msg.from}: ${msg.body}`);
-
-    // Si el mensaje empieza con /, lo envía a n8n (por webhook)
-    if (msg.body.startsWith('/')) {
-        const webhookUrl = 'http://0.0.0.0:5678/webhook/fe3ac4a0-9f79-4ec0-b3c8-ab393ea585e5'; // <-- Reemplaza con tu URL real
-        const response = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: msg.body, from: msg.from })
-        });
-
-        const result = await response.text();
-        await msg.reply(result);
+    console.log(`📩 ${msg.from}: ${msg.body}`);
+    
+    // Solo para pruebas: responde cualquier mensaje
+    if (!msg.fromMe) {
+        const webhookUrl = 'https://mi-n8n-render-1.onrender.com/webhook/TU_WEBHOOK_ID';
+        try {
+            const res = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg.body, from: msg.from })
+            });
+            const data = await res.json();
+            await msg.reply(data.response || "Gracias.");
+        } catch (e) {
+            console.error(e);
+            await msg.reply("Error interno.");
+        }
     }
 });
 
-// Inicia el cliente
+// Inicia WhatsApp
 client.initialize();
+
+// Servidor HTTP mínimo para evitar "Failed deploy"
+const PORT = process.env.PORT || 10000;
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('WhatsApp Web.js está activo');
+});
+
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Servidor HTTP escuchando en el puerto ${PORT}`);
+});
