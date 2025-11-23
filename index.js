@@ -29,7 +29,7 @@ client.on('message', async msg => {
     console.log(`📩 ${msg.from}: ${msg.body}`);
 
     // Reemplaza con tu URL real de n8n
-    const webhookUrl = 'https://mi-n8n-render-1.onrender.com/webhook/rBZhcnsuSAPdia3b';
+    const webhookUrl = 'http://0.0.0.0:10000/webhook/e7901b63-fada-41c0-9592-09c99e7b8f24';
 
     try {
     const res = await fetch(webhookUrl, {
