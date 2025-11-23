@@ -32,17 +32,28 @@ client.on('message', async msg => {
     const webhookUrl = 'https://mi-n8n-render-1.onrender.com/webhook/rBZhcnsuSAPdia3b';
 
     try {
-        const res = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: msg.body, from: msg.from })
-        });
-        const data = await res.json();
-        await msg.reply(data.response || "Gracias.");
-    } catch (e) {
-        console.error('Error:', e.message);
-        await msg.reply("⚠️ Asistente temporalmente fuera de servicio.");
+    const res = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg.body, from: msg.from })
+    });
+
+    console.log('🔍 Estado de n8n:', res.status);
+    
+    if (!res.ok) {
+        console.error('❌ n8n respondió con error:', res.status);
+        await msg.reply("⚠️ El asistente no está respondiendo.");
+        return;
     }
+
+    const data = await res.json();
+    console.log('📩 Respuesta de n8n:', data); // <-- Esto es clave
+
+    await msg.reply(data.response || "⚠️ Sin respuesta útil.");
+} catch (e) {
+    console.error('💥 Error al conectar con n8n:', e.message);
+    await msg.reply("⚠️ No pude contactar al asistente.");
+}
 });
 
 // Inicia WhatsApp
