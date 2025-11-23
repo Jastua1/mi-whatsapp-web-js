@@ -25,7 +25,7 @@ client.on('message', async msg => {
     
     // Solo para pruebas: responde cualquier mensaje
     if (!msg.fromMe) {
-        const webhookUrl = 'https://mi-n8n-render-1.onrender.com/webhook/TU_WEBHOOK_ID';
+        const webhookUrl = 'https://mi-n8n-render-1.onrender.com/webhook/rBZhcnsuSAPdia3b';
         try {
             const res = await fetch(webhookUrl, {
                 method: 'POST',
