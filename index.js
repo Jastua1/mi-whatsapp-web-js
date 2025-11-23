@@ -1,5 +1,6 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
+const http = require('http');
 
 // Inicializa el cliente de WhatsApp
 const client = new Client({
@@ -29,6 +30,7 @@ client.on('message', async msg => {
 
     // Reemplaza con tu URL real de n8n
     const webhookUrl = 'https://mi-n8n-render-1.onrender.com/webhook/rBZhcnsuSAPdia3b';
+
     try {
         const res = await fetch(webhookUrl, {
             method: 'POST',
@@ -45,3 +47,14 @@ client.on('message', async msg => {
 
 // Inicia WhatsApp
 client.initialize();
+
+// ✅ SERVIDOR HTTP MÍNIMO (obligatorio en Render)
+const PORT = process.env.PORT || 10000;
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('WhatsApp Web.js activo');
+});
+
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Servidor HTTP escuchando en puerto ${PORT}`);
+});
