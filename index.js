@@ -30,7 +30,7 @@ client.on('message', async msg => {
 
     // Si el mensaje empieza con /, lo envía a n8n (por webhook)
     if (msg.body.startsWith('/')) {
-        const webhookUrl = 'https://mi-n8n-render-1.onrender.com/webhook/...'; // <-- Reemplaza con tu URL real
+        const webhookUrl = 'http://0.0.0.0:5678/webhook/fe3ac4a0-9f79-4ec0-b3c8-ab393ea585e5'; // <-- Reemplaza con tu URL real
         const response = await fetch(webhookUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
